@@ -35,6 +35,7 @@ export interface Account {
   parentId?: string;
   children?: Account[];
   isGroup: boolean;
+  createdAt: string;
 }
 
 // Sample data structure matching the image
@@ -47,6 +48,7 @@ const sampleAccounts: Account[] = [
     balance: 1510000000,
     status: "ACTIVE",
     isGroup: true,
+    createdAt: "2024-01-15T08:30:00Z",
     children: [
       {
         id: "1100",
@@ -57,6 +59,7 @@ const sampleAccounts: Account[] = [
         status: "ACTIVE",
         parentId: "1000",
         isGroup: true,
+        createdAt: "2024-01-15T08:35:00Z",
         children: [
           {
             id: "1101",
@@ -67,6 +70,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "1100",
             isGroup: false,
+            createdAt: "2024-01-15T08:40:00Z",
           },
           {
             id: "1102",
@@ -77,6 +81,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "1100",
             isGroup: false,
+            createdAt: "2024-01-16T09:15:00Z",
           },
           {
             id: "1103",
@@ -87,6 +92,7 @@ const sampleAccounts: Account[] = [
             status: "INACTIVE",
             parentId: "1100",
             isGroup: false,
+            createdAt: "2024-01-17T10:20:00Z",
           },
           {
             id: "1104",
@@ -97,6 +103,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "1100",
             isGroup: false,
+            createdAt: "2024-01-18T11:30:00Z",
           },
           {
             id: "1105",
@@ -107,6 +114,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "1100",
             isGroup: false,
+            createdAt: "2024-01-19T14:45:00Z",
           },
         ],
       },
@@ -120,6 +128,7 @@ const sampleAccounts: Account[] = [
     balance: 1510000000,
     status: "ACTIVE",
     isGroup: true,
+    createdAt: "2024-01-15T08:30:00Z",
     children: [
       {
         id: "2100",
@@ -130,6 +139,7 @@ const sampleAccounts: Account[] = [
         status: "ACTIVE",
         parentId: "2000",
         isGroup: true,
+        createdAt: "2024-01-15T08:35:00Z",
         children: [
           {
             id: "2110",
@@ -140,6 +150,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "2100",
             isGroup: true,
+            createdAt: "2024-01-15T08:40:00Z",
             children: [
               {
                 id: "2111",
@@ -150,6 +161,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-20T09:00:00Z",
               },
               {
                 id: "2112",
@@ -160,6 +172,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-21T10:15:00Z",
               },
               {
                 id: "2114",
@@ -170,6 +183,7 @@ const sampleAccounts: Account[] = [
                 status: "INACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-22T11:30:00Z",
               },
               {
                 id: "2115",
@@ -180,6 +194,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-23T13:45:00Z",
               },
               {
                 id: "2116",
@@ -190,6 +205,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-24T15:20:00Z",
               },
               {
                 id: "2117",
@@ -200,6 +216,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-25T16:10:00Z",
               },
               {
                 id: "2118",
@@ -210,6 +227,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2110",
                 isGroup: false,
+                createdAt: "2024-01-26T08:30:00Z",
               },
             ],
           },
@@ -222,6 +240,7 @@ const sampleAccounts: Account[] = [
             status: "ACTIVE",
             parentId: "2100",
             isGroup: true,
+            createdAt: "2024-01-15T08:45:00Z",
             children: [
               {
                 id: "2121",
@@ -232,6 +251,7 @@ const sampleAccounts: Account[] = [
                 status: "ACTIVE",
                 parentId: "2120",
                 isGroup: false,
+                createdAt: "2024-01-27T09:45:00Z",
               },
             ],
           },
@@ -270,6 +290,16 @@ const AccountRow: React.FC<AccountRowProps> = ({
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(dateString));
   };
 
   const paddingLeft = level * 24;
@@ -349,6 +379,11 @@ const AccountRow: React.FC<AccountRowProps> = ({
         {/* Balance */}
         <div className="w-40 text-right text-sm font-semibold text-foreground mr-4">
           {formatCurrency(account.balance)}
+        </div>
+
+        {/* Created At */}
+        <div className="w-32 text-right text-xs text-muted-foreground mr-4">
+          {formatDate(account.createdAt)}
         </div>
 
         {/* Actions Dropdown */}
@@ -503,6 +538,16 @@ const AccountRow: React.FC<AccountRowProps> = ({
               </span>
             </div>
           </div>
+
+          {/* Created At */}
+          <div className="mt-2 pt-2 border-t border-border">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Dibuat:</span>
+              <span className="text-xs text-muted-foreground">
+                {formatDate(account.createdAt)}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -650,7 +695,7 @@ export default function ChartOfAccounts() {
             Chart of Accounts
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Manage Account Structure
+            Kelola struktur dan data akun
           </p>
         </div>
         <Button
@@ -675,7 +720,8 @@ export default function ChartOfAccounts() {
               <div className="flex-1 ml-11">Nama Akun</div>
               <div className="w-16 mr-6">Tipe</div>
               <div className="w-20 mr-4">Status</div>
-              <div className="w-40 text-right mr-12">Saldo</div>
+              <div className="w-40 text-right mr-4">Saldo</div>
+              <div className="w-32 text-right mr-4">Dibuat</div>
               <div className="w-8"></div>
             </div>
 

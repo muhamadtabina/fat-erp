@@ -1,6 +1,8 @@
 import {
+  Building,
   Calendar,
   ChartBar,
+  ChevronRight,
   Home,
   Inbox,
   Search,
@@ -18,8 +20,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarSeparator,
 } from "../ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
 
 const items = [
   {
@@ -99,6 +109,72 @@ const AppSidebar = () => {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
+        </SidebarGroup>
+        {/* ADMINISTRATIONS */}
+        <SidebarGroup>
+          <Collapsible className="group/collapsible">
+            <SidebarMenuItem>
+              <SidebarGroupLabel>Administration</SidebarGroupLabel>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <Building />
+                  Entity Management
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              {/* ISI */}
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link to="/commercial-business-entity">
+                        Commercial Business Entity
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link to="/logistics-entities-and-costs">
+                        Logistics Entities & Costs
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        </SidebarGroup>
+        {/* SUPPLY CHAIN */}
+        <SidebarGroup>
+          <Collapsible className="group/collapsible">
+            <SidebarMenuItem>
+              <SidebarGroupLabel>Commercial</SidebarGroupLabel>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <Building />
+                  Supply Chain
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              {/* ISI */}
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link to="/item-category">Item Category</Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link to="/business-entity-allocation">
+                        Business Entity Allocation
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
         </SidebarGroup>
         {/* ADMIN MENU*/}
         <SidebarGroup>

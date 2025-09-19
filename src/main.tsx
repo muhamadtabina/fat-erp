@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/providers/auth-provider";
 import ThemeProvider from "@/components/theme-provider";
 import { AlertProvider } from "@/providers/alert-provider";
-import { AppRoutes } from "./app-routes";
+import AppRoutes from "./app-routes";
 import { queryClient } from "@/lib/query-client";
 
 createRoot(document.getElementById("root")!).render(

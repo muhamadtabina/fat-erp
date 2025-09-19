@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle, Power } from "lucide-react";
 import { Loader2 } from "lucide-react";
-import type { Account } from "./chart-of-accounts";
+import type { Entity } from "./columns";
 
 interface ConfirmToggleStatusDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  account: Account | null;
+  entity: Entity | null;
   onConfirm: () => void;
   isLoading?: boolean;
 }
@@ -21,7 +21,7 @@ interface ConfirmToggleStatusDialogProps {
 export function ConfirmToggleStatusDialog({
   open,
   onOpenChange,
-  account,
+  entity,
   onConfirm,
   isLoading = false,
 }: ConfirmToggleStatusDialogProps) {
@@ -33,13 +33,13 @@ export function ConfirmToggleStatusDialog({
     onOpenChange(false);
   };
 
-  if (!account) return null;
+  if (!entity) return null;
 
-  const isDeactivating = account.status === "ACTIVE";
+  const isDeactivating = entity.status === "ACTIVE";
   const actionText = isDeactivating ? "Nonaktifkan" : "Aktifkan";
   const actionDescription = isDeactivating
-    ? "Akun ini akan dinonaktifkan dan tidak dapat digunakan untuk transaksi."
-    : "Akun ini akan diaktifkan kembali dan dapat digunakan untuk transaksi.";
+    ? "Entitas ini akan dinonaktifkan dan tidak dapat digunakan untuk transaksi."
+    : "Entitas ini akan diaktifkan kembali dan dapat digunakan untuk transaksi.";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,7 +63,7 @@ export function ConfirmToggleStatusDialog({
             </div>
             <div className="flex-1">
               <DialogTitle className="text-left text-lg font-semibold">
-                {actionText} Akun
+                {actionText} Entitas
               </DialogTitle>
               <DialogDescription className="text-left text-sm text-muted-foreground">
                 {actionDescription}
@@ -77,20 +77,28 @@ export function ConfirmToggleStatusDialog({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="flex flex-col sm:flex-row sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">
-                  Nama Akun:
+                  Nama Entitas:
                 </span>
                 <span className="text-sm font-medium truncate">
-                  {account.name}
+                  {entity.name}
                 </span>
               </div>
               <div className="flex flex-col sm:flex-row sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">
-                  Kode Akun:
+                  Tipe Bisnis:
                 </span>
-                <span className="text-sm font-mono font-medium">
-                  {account.code}
+                <span className="text-sm font-medium truncate">
+                  {entity.businessType}
                 </span>
               </div>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:justify-between">
+              <span className="text-sm font-medium text-muted-foreground">
+                NPWP:
+              </span>
+              <span className="text-sm font-mono font-medium">
+                {entity.npwp}
+              </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between">
               <span className="text-sm font-medium text-muted-foreground">
@@ -98,12 +106,12 @@ export function ConfirmToggleStatusDialog({
               </span>
               <span
                 className={`text-sm font-medium ${
-                  account.status === "ACTIVE"
+                  entity.status === "ACTIVE"
                     ? "text-green-600 dark:text-green-400"
                     : "text-gray-600 dark:text-gray-400"
                 }`}
               >
-                {account.status === "ACTIVE" ? "Aktif" : "Non-aktif"}
+                {entity.status === "ACTIVE" ? "Aktif" : "Non-aktif"}
               </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between">
@@ -131,9 +139,9 @@ export function ConfirmToggleStatusDialog({
                     Peringatan
                   </p>
                   <p className="text-orange-700 dark:text-orange-300">
-                    Akun yang dinonaktifkan tidak dapat digunakan untuk mencatat
+                    Entitas yang dinonaktifkan tidak dapat digunakan untuk mencatat
                     transaksi baru. Pastikan tidak ada transaksi yang sedang
-                    berjalan dengan akun ini.
+                    berjalan dengan entitas ini.
                   </p>
                 </div>
               </div>
@@ -162,7 +170,7 @@ export function ConfirmToggleStatusDialog({
             }`}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {actionText} Akun
+            {actionText} Entitas
           </Button>
         </div>
       </DialogContent>

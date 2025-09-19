@@ -8,25 +8,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AlertTriangle } from "lucide-react";
-import type { Account } from "./chart-of-accounts";
+import { type Entity } from "./entity-types";
 
 interface ConfirmDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  account: Account | null;
-  onAccountDeleted: (accountId: string) => void;
+  entity: Entity | null;
+  onEntityDeleted: (entityId: string) => void;
 }
 
 export function ConfirmDeleteDialog({
   open,
   onOpenChange,
-  account,
-  onAccountDeleted,
+  entity,
+  onEntityDeleted,
 }: ConfirmDeleteDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirmDelete = async () => {
-    if (!account) return;
+    if (!entity) return;
 
     setIsLoading(true);
 
@@ -34,10 +34,10 @@ export function ConfirmDeleteDialog({
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      onAccountDeleted(account.id);
+      onEntityDeleted(entity.id);
       onOpenChange(false);
     } catch (error) {
-      console.error("Error deleting account:", error);
+      console.error("Error deleting entity:", error);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,7 @@ export function ConfirmDeleteDialog({
     onOpenChange(false);
   };
 
-  if (!account) return null;
+  if (!entity) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -59,7 +59,7 @@ export function ConfirmDeleteDialog({
             </div>
             <div className="flex-1">
               <DialogTitle className="text-left text-lg font-semibold">
-                Hapus Akun
+                Hapus Entitas
               </DialogTitle>
               <DialogDescription className="text-left text-sm text-muted-foreground">
                 Tindakan ini tidak dapat dibatalkan.
@@ -73,57 +73,68 @@ export function ConfirmDeleteDialog({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="flex flex-col sm:flex-row sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">
-                  Nama Akun:
+                  Nama Entitas:
                 </span>
-                <span className="text-sm font-medium truncate">
-                  {account.name}
+                <span className="text-sm font-medium break-words">
+                  {entity.name}
                 </span>
               </div>
               <div className="flex flex-col sm:flex-row sm:justify-between">
                 <span className="text-sm font-medium text-muted-foreground">
-                  Kode Akun:
+                  Tipe Bisnis:
                 </span>
-                <span className="text-sm font-mono font-medium">
-                  {account.code}
+                <span className="text-sm font-medium">
+                  {entity.businessType}
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:justify-between">
+            <div className="flex flex-col sm:flex-row sm:justify-between border-t pt-2">
               <span className="text-sm font-medium text-muted-foreground">
-                Tipe:
+                NPWP:
               </span>
-              <span className="text-sm font-medium">{account.type}</span>
+              <span className="text-sm font-mono font-medium">
+                {entity.npwp}
+              </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:justify-between">
+            <div className="flex flex-col sm:flex-row sm:justify-between border-t pt-2">
               <span className="text-sm font-medium text-muted-foreground">
-                Saldo:
+                Status:
               </span>
-              <span className="text-sm font-semibold">
-                {new Intl.NumberFormat("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                }).format(account.balance)}
+              <span
+                className={`text-sm font-medium ${
+                  entity.status === "ACTIVE"
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-gray-600 dark:text-gray-400"
+                }`}
+              >
+                {entity.status === "ACTIVE" ? "Aktif" : "Non-aktif"}
+              </span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:justify-between border-t pt-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                Dibuat:
+              </span>
+              <span className="text-sm font-medium">
+                {new Date(entity.created_at).toLocaleDateString("id-ID", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </span>
             </div>
           </div>
 
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
-            <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-red-800 dark:text-red-200 mb-1">
-                  Peringatan
-                </p>
-                <p className="text-red-700 dark:text-red-300">
-                  Menghapus akun ini akan menghapus semua data terkait dan tidak dapat dikembalikan. 
-                  Pastikan akun ini tidak memiliki transaksi yang masih aktif.
-                </p>
-              </div>
-            </div>
+          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <p className="text-sm text-red-800 dark:text-red-200 leading-relaxed">
+              <strong>Peringatan:</strong> Menghapus entitas ini akan menghapus
+              semua data terkait termasuk transaksi, laporan, dan konfigurasi
+              yang berhubungan dengan entitas ini. Tindakan ini tidak dapat
+              dikembalikan. Pastikan entitas ini tidak memiliki transaksi yang
+              masih aktif.
+            </p>
           </div>
         </div>
 
@@ -133,7 +144,7 @@ export function ConfirmDeleteDialog({
             variant="outline"
             onClick={handleCancel}
             disabled={isLoading}
-            className="w-full sm:w-auto text-sm"
+            className="w-full sm:w-auto"
           >
             Batal
           </Button>
@@ -142,9 +153,9 @@ export function ConfirmDeleteDialog({
             variant="destructive"
             onClick={handleConfirmDelete}
             disabled={isLoading}
-            className="w-full sm:w-auto text-sm"
+            className="w-full sm:w-auto"
           >
-            {isLoading ? "Menghapus..." : "Ya, Hapus Akun"}
+            {isLoading ? "Menghapus..." : "Ya, Hapus Entitas"}
           </Button>
         </div>
       </DialogContent>

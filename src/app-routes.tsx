@@ -7,8 +7,13 @@ import Dashboard from "./Dashboard/Dashboard";
 import { Loader2 } from "lucide-react";
 import Users from "./components/users/users";
 import ChartOfAccounts from "./components/chart-of-accounts/chart-of-accounts";
+import CommercialBusinessEntity from "./components/entity-management/commercial-business-entity/entity-management";
+import { AddEntityPage } from "./components/entity-management/commercial-business-entity/add-entity-page";
+import { EditEntityPage } from "./components/entity-management/commercial-business-entity/edit-entity-page";
+import LogisticsEntitiesManagement from "./components/entity-management/logistics-entities-and-costs/logistics-entities-management";
+import AddLogisticsEntityPage from "./components/entity-management/logistics-entities-and-costs/add-logistics-entity-page";
 
-export function AppRoutes() {
+export default function AppRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
 
   // Tampilkan loading indicator saat sesi sedang diverifikasi
@@ -37,6 +42,26 @@ export function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
           <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
+          <Route
+            path="/commercial-business-entity"
+            element={<CommercialBusinessEntity />}
+          />
+          <Route
+            path="/commercial-business-entity/add"
+            element={<AddEntityPage />}
+          />
+          <Route
+            path="/commercial-business-entity/edit/:id"
+            element={<EditEntityPage />}
+          />
+          <Route
+            path="/logistics-entities-and-costs"
+            element={<LogisticsEntitiesManagement />}
+          />
+          <Route
+            path="/logistics-entities-and-costs/add"
+            element={<AddLogisticsEntityPage />}
+          />
         </Route>
       </Route>
       <Route path="*" element={<h1>404: Halaman Tidak Ditemukan</h1>} />

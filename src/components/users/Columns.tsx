@@ -24,7 +24,7 @@ export const createColumns = (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 px-2 lg:px-3 ml-10"
+          className="h-8 px-2 lg:px-3"
         >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
@@ -32,7 +32,7 @@ export const createColumns = (
       );
     },
     cell: ({ row }) => {
-      return <div className="font-medium ml-13">{row.getValue("name")}</div>;
+      return <div className="font-medium">{row.getValue("name")}</div>;
     },
   },
   {
@@ -85,14 +85,14 @@ export const createColumns = (
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 px-2 lg:px-3"
         >
-          Created At
+          Tanggal Dibuat
           <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const createdAt = row.getValue("created_at") as string;
-      const formatted = new Date(createdAt).toLocaleDateString("id-ID", {
+      const created_at = row.getValue("created_at") as string;
+      const formatted = new Date(created_at).toLocaleDateString("id-ID", {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -102,12 +102,12 @@ export const createColumns = (
   },
   {
     id: "actions",
-    header: () => <div>Actions</div>,
+    header: () => <div>Aksi</div>,
     cell: ({ row }) => {
       const user = row.original;
 
       return (
-        <div className="flex ml-2">
+        <div className="flex">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -116,7 +116,7 @@ export const createColumns = (
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>Aksi</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(user.id)}
               >

@@ -118,9 +118,12 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="">
-      <div className="mb-2 px-4 py-2 bg-secondary rounded-md">
-        <h1 className="font-semibold">List Users</h1>
+    <div className="container mx-auto">
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+        <p className="text-muted-foreground">
+          Kelola pengguna dan hak akses sistem
+        </p>
       </div>
       <DataTable
         data={data}

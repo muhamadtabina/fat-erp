@@ -117,4 +117,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Fix calendar icon color in dark mode for date inputs */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+  
+  /* For Firefox */
+  .dark input[type="date"] {
+    color-scheme: dark;
+  }
 }

@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableFooter, // Pastikan TableFooter diimpor
+  TableFooter,
 } from "@/components/ui/table";
 import {
   DropdownMenu,
@@ -33,22 +33,24 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, MoreHorizontal } from "lucide-react";
-import type { User } from "@/lib/api/users/users-api";
+import type { LogisticsEntity } from "./logistics-entity-types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onAddUser?: () => void;
-  onEditUser?: (user: User) => void;
-  onDeleteUser?: (user: User) => void;
+  onAddEntity?: () => void;
+  onEditEntity?: (entity: LogisticsEntity) => void;
+  onDeleteEntity?: (entity: LogisticsEntity) => void;
+  onToggleStatus?: (entity: LogisticsEntity) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  onAddUser,
-  onEditUser,
-  onDeleteUser,
+  onAddEntity,
+  onEditEntity,
+  onDeleteEntity,
+  onToggleStatus,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -76,17 +78,17 @@ export function DataTable<TData, TValue>({
       {/* Header Section - Mobile Responsive */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-4">
         <Input
-          placeholder="Cari pengguna..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Cari entitas logistik..."
+          value={(table.getColumn("namaEntitasInternal")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("namaEntitasInternal")?.setFilterValue(event.target.value)
           }
           className="w-full sm:max-w-sm"
         />
-        {onAddUser && (
-          <Button onClick={onAddUser} className="w-full sm:w-auto">
+        {onAddEntity && (
+          <Button onClick={onAddEntity} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
-            Tambah Pengguna
+            Tambah Entitas
           </Button>
         )}
       </div>
@@ -135,7 +137,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Tidak ada data pengguna.
+                  Tidak ada data entitas logistik.
                 </TableCell>
               </TableRow>
             )}
@@ -154,7 +156,7 @@ export function DataTable<TData, TValue>({
       <div className="md:hidden space-y-4">
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => {
-            const user = row.original as User;
+            const entity = row.original as LogisticsEntity;
             return (
               <div
                 key={row.id}
@@ -162,15 +164,28 @@ export function DataTable<TData, TValue>({
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-2 flex-1">
-                    <h3 className="font-medium text-sm">{user.name}</h3>
+                    <h3 className="font-medium text-sm">{entity.namaEntitasInternal}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {user.email}
+                      {entity.kodeEntitas}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {entity.deskripsi}
                     </p>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30">
-                        {user.role}
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                          entity.status === "ACTIVE"
+                            ? "bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
+                            : "bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-400/10 dark:text-red-400 dark:ring-red-400/30"
+                        }`}
+                      >
+                        {entity.status === "ACTIVE" ? "Aktif" : "Tidak Aktif"}
                       </span>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Dibuat:{" "}
+                      {new Date(entity.created_at).toLocaleDateString("id-ID")}
+                    </p>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -182,20 +197,32 @@ export function DataTable<TData, TValue>({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Aksi</DropdownMenuLabel>
                       <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(user.id)}
+                        onClick={() => navigator.clipboard.writeText(entity.id)}
                       >
-                        Salin ID Pengguna
+                        Salin ID
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => onEditUser?.(user)}>
-                        Edit Pengguna
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onDeleteUser?.(user)}
-                        className="text-red-600"
-                      >
-                        Hapus Pengguna
-                      </DropdownMenuItem>
+                      {onEditEntity && (
+                        <DropdownMenuItem onClick={() => onEditEntity(entity)}>
+                          Edit
+                        </DropdownMenuItem>
+                      )}
+                      {onToggleStatus && (
+                        <DropdownMenuItem onClick={() => onToggleStatus(entity)}>
+                          {entity.status === "ACTIVE" ? "Nonaktifkan" : "Aktifkan"}
+                        </DropdownMenuItem>
+                      )}
+                      {onDeleteEntity && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => onDeleteEntity(entity)}
+                            className="text-red-600"
+                          >
+                            Hapus
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -204,12 +231,12 @@ export function DataTable<TData, TValue>({
           })
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            Tidak ada pengguna ditemukan.
+            Tidak ada data entitas logistik.
           </div>
         )}
-
+        
         {/* Mobile Pagination */}
-        <div className="pt-4">
+        <div className="mt-4">
           <DataTablePagination table={table} />
         </div>
       </div>
