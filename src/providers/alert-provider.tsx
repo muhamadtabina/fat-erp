@@ -1,5 +1,3 @@
-// src/components/providers/AlertProvider.tsx
-
 import { useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -15,7 +13,7 @@ import {
 import { CheckCircle, XCircle, HelpCircle } from "lucide-react";
 
 // Import the context and types from the new file
-import { AlertContext, type AlertType } from "@/contexts/AlertContext"; // Adjust the import path if necessary
+import { AlertContext, type AlertType } from "@/contexts/alert-context"; // Adjust the import path if necessary
 
 // Define the internal state type for the provider
 interface AlertState {

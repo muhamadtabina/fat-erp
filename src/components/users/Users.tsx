@@ -1,52 +1,36 @@
-import { DataTable } from "./DataTable";
-import { createColumns, type User } from "./Columns";
-import { getAllUsers, deleteUser } from "@/lib/api/users/UsersApi";
-import { useAuth } from "@/contexts/AuthContext";
-import { AddUserDialog } from "./AddUserDialog";
-import { EditUserDialog } from "./EditUserDialog";
-import { useAlert } from "@/contexts/AlertContext";
+import { DataTable } from "./data-table";
+import { createColumns, type User } from "./columns";
+import { AddUserDialog } from "./add-user-dialog";
+import { EditUserDialog } from "./edit-user-dialog";
+import { useAlert } from "@/contexts/alert-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUsers, useDeleteUser } from "@/hooks/use-users";
 import React from "react";
 
 export default function UsersPage() {
-  const { accessToken } = useAuth();
   const { showAlert } = useAlert();
-  const [data, setData] = React.useState<User[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
 
-  const getData = React.useCallback(async () => {
-    if (!accessToken) {
-      setError("No access token available");
-      setLoading(false);
-      return;
-    }
+  // Menggunakan React Query hooks
+  const {
+    data: usersResponse,
+    isLoading,
+    error,
+  } = useUsers({ page: 1, limit: 100 });
+  const deleteUserMutation = useDeleteUser();
 
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getAllUsers(accessToken, { page: 1, limit: 100 });
-      setData(response.data.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  }, [accessToken]);
-
-  React.useEffect(() => {
-    getData();
-  }, [accessToken, getData]);
+  // Extract data dari response
+  const data = usersResponse?.data.data || [];
 
   const handleAddUser = () => {
     setIsAddDialogOpen(true);
   };
 
   const handleUserAdded = () => {
-    getData();
+    // Tidak perlu manual refresh, React Query akan handle invalidation
+    setIsAddDialogOpen(false);
   };
 
   const handleEditUser = (user: User) => {
@@ -55,7 +39,8 @@ export default function UsersPage() {
   };
 
   const handleUserUpdated = () => {
-    getData();
+    // Tidak perlu manual refresh, React Query akan handle invalidation
+    setIsEditDialogOpen(false);
   };
 
   const handleDeleteUser = async (user: User) => {
@@ -69,32 +54,11 @@ export default function UsersPage() {
       return;
     }
 
-    if (!accessToken) {
-      showAlert("error", "No access token available");
-      return;
-    }
-
-    try {
-      const response = await deleteUser(accessToken, user.id);
-
-      if (response.ok) {
-        showAlert("success", "User berhasil dihapus");
-        getData();
-      } else {
-        const errorData = await response.json();
-        showAlert("error", errorData.message || "Gagal menghapus user");
-      }
-    } catch (err) {
-      showAlert(
-        "error",
-        err instanceof Error
-          ? err.message
-          : "Terjadi kesalahan saat menghapus user"
-      );
-    }
+    // Menggunakan mutation dari React Query
+    deleteUserMutation.mutate(user.id);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="">
         <div className="mb-8 px-4 py-2 bg-secondary rounded-md">
@@ -106,7 +70,7 @@ export default function UsersPage() {
             <Skeleton className="h-9 w-64" />
             <Skeleton className="h-9 w-24" />
           </div>
-          
+
           {/* Table skeleton */}
           <div className="rounded-md border">
             {/* Table header */}
@@ -119,7 +83,7 @@ export default function UsersPage() {
                 <Skeleton className="h-4 w-16" />
               </div>
             </div>
-            
+
             {/* Table rows */}
             {Array.from({ length: 5 }).map((_, index) => (
               <div key={index} className="border-b p-4 last:border-b-0">
@@ -133,7 +97,7 @@ export default function UsersPage() {
               </div>
             ))}
           </div>
-          
+
           {/* Pagination skeleton */}
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-32" />
@@ -150,19 +114,20 @@ export default function UsersPage() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   return (
     <div className="">
-      <div className="mb-8 px-4 py-2 bg-secondary rounded-md">
-        <h1 className="font-semibold">All Users</h1>
+      <div className="mb-2 px-4 py-2 bg-secondary rounded-md">
+        <h1 className="font-semibold">List Users</h1>
       </div>
       <DataTable
         data={data}
         columns={createColumns(handleEditUser, handleDeleteUser)}
         onAddUser={handleAddUser}
         onEditUser={handleEditUser}
+        onDeleteUser={handleDeleteUser}
       />
       <AddUserDialog
         open={isAddDialogOpen}

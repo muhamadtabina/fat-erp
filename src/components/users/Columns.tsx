@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import type { User } from "@/lib/api/users/UsersApi";
+import type { User } from "@/lib/api/users/users-api";
 
 export type { User };
 

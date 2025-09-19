@@ -37,6 +37,8 @@ func (service *AuthServiceImpl) Register(ctx context.Context, request auth.AuthR
 		return nil, helper.FormatValidationError(err)
 	}
 
+	
+
 	var createdUser domain.Users
 
 	err := service.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -235,9 +237,6 @@ func (service *AuthServiceImpl) ChangePassword(ctx context.Context, userID uuid.
             return errors.New("new password must be different from old password")
         }
 
-        // <-- Pengecekan konfirmasi password dihapus.
-        // Percayakan pada validator di lapisan sebelumnya.
-
         // Hash new password
         hashedPassword, err := helper.HashPassword(request.NewPassword)
         if err != nil {
@@ -249,9 +248,7 @@ func (service *AuthServiceImpl) ChangePassword(ctx context.Context, userID uuid.
         if err = service.AuthRepository.Update(ctx, tx, user); err != nil {
             return errors.New("failed to update password")
         }
-
-        // <-- PENTING: Hapus semua sesi/refresh token lama saat ganti password.
-        // Ini memaksa logout di semua perangkat lain untuk keamanan.
+		
         if err := service.TokenRepository.DeleteByUserID(ctx, tx, user.ID); err != nil {
             // Kita bisa log error ini, tapi jangan sampai membuat proses ganti password gagal.
             // Paling penting password sudah berhasil diubah.

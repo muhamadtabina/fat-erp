@@ -1,6 +1,6 @@
 import React, { useState, useEffect, type ReactNode } from "react";
-import { refreshAccessToken, userLogout } from "@/lib/api/auth/AuthApi";
-import { AuthContext, type AuthContextType } from "@/contexts/AuthContext";
+import { refreshAccessToken, userLogout } from "@/lib/api/auth/auth-api";
+import { AuthContext, type AuthContextType } from "@/contexts/auth-context";
 
 // Constants for localStorage keys
 const ACCESS_TOKEN_KEY = "access_token";
@@ -46,22 +46,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthenticated = !!accessToken && !!user;
+  const isAuthenticated = !!accessToken;
 
   const refreshToken = async (): Promise<boolean> => {
     try {
-      const response = await refreshAccessToken();
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data && data.data.access_token) {
-          setAccessToken(data.data.access_token);
-          saveTokenToStorage(data.data.access_token);
-          if (data.data.user) {
-            setUser(data.data.user);
-            saveUserToStorage(data.data.user);
-          }
-          return true;
+      const data = await refreshAccessToken();
+      if (data.code === 200 && data.data && data.data.access_token) {
+        setAccessToken(data.data.access_token);
+        saveTokenToStorage(data.data.access_token);
+        if (data.data.user) {
+          setUser(data.data.user);
+          saveUserToStorage(data.data.user);
         }
+        return true;
       }
       return false;
     } catch (error) {
@@ -70,12 +67,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = (token: string, userData: User) => {
+  // Function to get new token for API calls
+  const getRefreshedToken = async (): Promise<string | null> => {
+    const success = await refreshToken();
+    return success ? accessToken : null;
+  };
+
+  const login = (token: string, userData?: User) => {
     setAccessToken(token);
-    setUser(userData);
+    if (userData) {
+      setUser(userData);
+    }
     // Simpan ke localStorage untuk persistensi
     saveTokenToStorage(token);
-    saveUserToStorage(userData);
+    if (userData) {
+      saveUserToStorage(userData);
+    }
   };
 
   const logout = async () => {
@@ -102,10 +109,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const storedToken = getTokenFromStorage();
       const storedUser = getUserFromStorage();
 
-      if (storedToken && storedUser) {
+      if (storedToken) {
         // Jika ada token di localStorage, set state
         setAccessToken(storedToken);
-        setUser(storedUser);
+        if (storedUser) {
+          setUser(storedUser);
+        }
         setIsLoading(false);
         return;
       }
@@ -130,7 +139,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     };
     initializeAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -155,6 +163,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     refreshToken,
+    getRefreshedToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

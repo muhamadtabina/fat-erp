@@ -3,13 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router";
-import { useAlert } from "@/contexts/AlertContext";
 import { useState } from "react";
-import { userLogin } from "@/lib/api/auth/AuthApi";
 import { type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useLogin } from "@/hooks/use-auth";
 
 export function LoginForm({
   className,
@@ -17,49 +14,12 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const { showAlert } = useAlert();
+  const loginMutation = useLogin();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await userLogin({ email, password });
-
-      if (response.status === 200) {
-        const responseBody = await response.json();
-
-        if (responseBody.data && responseBody.data.access_token) {
-          // Gunakan Auth Context untuk menyimpan token di memory
-          const userData = {
-            id: responseBody.data.user?.id || "1",
-            email: responseBody.data.user?.email || email,
-            name: responseBody.data.user?.name || "User",
-          };
-
-          login(responseBody.data.access_token, userData);
-          await navigate("/dashboard");
-        } else {
-          await showAlert("error", "Invalid response format");
-        }
-      } else {
-        const responseBody = await response.json();
-        await showAlert("error", responseBody.message || "Login failed");
-      }
-    } catch (error) {
-      await showAlert(
-        "error",
-        "An unexpected error occurred. Please try again."
-      );
-      console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation.mutate({ email, password });
   }
-
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -84,7 +44,7 @@ export function LoginForm({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                 />
               </div>
               <div className="grid gap-3">
@@ -98,16 +58,18 @@ export function LoginForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                 />
               </div>
               <Button
                 type="submit"
                 className="w-full mt-6 mb-8"
-                disabled={isLoading}
+                disabled={loginMutation.isPending}
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Signing In..." : "Sign In"}
+                {loginMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {loginMutation.isPending ? "Signing In..." : "Sign In"}
               </Button>
             </div>
           </form>

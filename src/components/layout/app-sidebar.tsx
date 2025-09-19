@@ -1,4 +1,12 @@
-import { Calendar, Home, Inbox, Search, Settings, Users } from "lucide-react";
+import {
+  Calendar,
+  ChartBar,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  Users,
+} from "lucide-react";
 import { Link } from "react-router";
 import {
   Sidebar,
@@ -75,15 +83,34 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {/* FINANCE & ACCOUNTING MENU*/}
+        <SidebarGroup>
+          <SidebarGroupLabel>Finance & Accounting</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {/* CHART OF ACCOUNT */}
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={"/chart-of-accounts"}>
+                    <ChartBar />
+                    <span>Chart of Accounts</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        {/* ADMIN MENU*/}
         <SidebarGroup>
           <SidebarGroupLabel>Admin</SidebarGroupLabel>
           <SidebarGroupContent>
+            {/* MANAGE USERS MENU*/}
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to={"/users"}>
                     <Users />
-                    <span>Kelola Users</span>
+                    <span>Manage Users</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

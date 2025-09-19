@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 
 // Perhatikan: Komponen ini tidak lagi membutuhkan 'children' sebagai props
 export const ProtectedRoute = () => {

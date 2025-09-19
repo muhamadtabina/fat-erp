@@ -1,13 +1,12 @@
-// src/AppRoutes.tsx
-
 import { Routes, Route, Navigate } from "react-router";
-import { useAuth } from "@/contexts/AuthContext";
-import UserLogin from "@/components/auth/LoginPage";
+import { useAuth } from "@/contexts/auth-context";
+import UserLogin from "@/components/auth/login-page";
 import { ProtectedRoute } from "@/components/protected-route";
 import Layout from "./components/layout/layout";
 import Dashboard from "./Dashboard/Dashboard";
 import { Loader2 } from "lucide-react";
-import Users from "./components/users/Users";
+import Users from "./components/users/users";
+import ChartOfAccounts from "./components/chart-of-accounts/chart-of-accounts";
 
 export function AppRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -37,6 +36,7 @@ export function AppRoutes() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
         </Route>
       </Route>
       <Route path="*" element={<h1>404: Halaman Tidak Ditemukan</h1>} />

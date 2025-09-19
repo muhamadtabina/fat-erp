@@ -12,14 +12,14 @@ import { Button } from "../ui/button";
 import { LogOut, Moon, Settings, Sun, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useTheme } from "@/hooks/use-theme";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth-context";
 
 const Navbar = () => {
   const { setTheme } = useTheme();
   const { logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    logout();
   };
   return (
     <nav className="p-4 flex items-center justify-between sticky top-0 bg-background z-10">
@@ -53,7 +53,7 @@ const Navbar = () => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
-              <AvatarImage src="https://avatars.githubusercontent.com/u/1486366" />
+              <AvatarImage src="/logo.svg" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>

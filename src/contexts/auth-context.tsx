@@ -12,9 +12,10 @@ export interface AuthContextType {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string, userData: User) => void;
+  login: (token: string, userData?: User) => void;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
+  getRefreshedToken: () => Promise<string | null>;
 }
 
 // Buat dan ekspor Context
