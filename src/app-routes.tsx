@@ -5,7 +5,7 @@ import { ProtectedRoute } from "@/components/protected-route";
 import Layout from "./components/layout/layout";
 import Dashboard from "./Dashboard/Dashboard";
 import { Loader2 } from "lucide-react";
-import Users from "./components/users/users";
+import Users from "./components/users/Users";
 import ChartOfAccounts from "./components/chart-of-accounts/chart-of-accounts";
 import CommercialBusinessEntity from "./components/entity-management/commercial-business-entity/entity-management";
 import { AddEntityPage } from "./components/entity-management/commercial-business-entity/add-entity-page";
